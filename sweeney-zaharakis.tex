@@ -4,6 +4,10 @@
 \author{J Sweeney and D Zaharakis}
 \date{\today}
 
+\usepackage{siunitx}
+\usepackage{graphicx}
+\bibliographystyle{IEEEtran}
+
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -13,6 +17,7 @@ Add an abstract / executive summary here
 \section{Introduction}
 %    1. Problem Statement and Background Research
 %	Problem Statement
+Test citation here \cite{buck2020go}.
 
 \subsection{Problem statement}
 The problem is to design an autonomous turret. The turret should identify shapes and colors. It also needs to differentiate between what is a target and what is not. Furthermore, the turret should be able to fire once it is properly aligned with the target. It should do so relatively quickly and accurately. This means the turret should not fire at a target that is of similar color, but different shape than the desired target. Lastly, the table should move to aim the gun based on information provided to it by the camera. The turret will need to be controlled with programming that will take into account information from the camera and will then control the turret table and the gun in unison. 
@@ -187,9 +192,8 @@ To me it seems like the test is only testing precision and not accuracy
 \section{Discussion}
 \section{Acknowledgements}
 
-
-% references here
-%\bibliography{sweeney-zaharakis.bib}
+% References
+\bibliography{sweeney-zaharakis.bib}
 
 
 
