@@ -1,114 +1,148 @@
+\documentclass{article}
 
-    1. Problem Statement and Background Research
-	Problem Statement
+\title{EW309 Final Report, Team Duck One}
+\author{J Sweeney and D Zaharakis}
+\date{\today}
 
+\begin{document}
+\maketitle
+\begin{abstract}
+Add an abstract / executive summary here
+\end{abstract}
+
+\section{Introduction}
+%    1. Problem Statement and Background Research
+%	Problem Statement
+
+\subsection{Problem statement}
 The problem is to design an autonomous turret. The turret should identify shapes and colors. It also needs to differentiate between what is a target and what is not. Furthermore, the turret should be able to fire once it is properly aligned with the target. It should do so relatively quickly and accurately. This means the turret should not fire at a target that is of similar color, but different shape than the desired target. Lastly, the table should move to aim the gun based on information provided to it by the camera. The turret will need to be controlled with programming that will take into account information from the camera and will then control the turret table and the gun in unison. 
-Background Research
+
+\subsection{Background research}
 One turret design alternative is the autonomous machine gun created by DoDaam Systems in South Korea. It senses targets through a thermal imaging camera and focuses on objects that are “human sized.” Further it uses a laser to determine the range of the identified targets and fires autonomously. It is not clear what controls are in place to ensure that the targets fired upon are enemy combatants, which is a very important differentiation to have. It is different than ours because they use a thermal camera, where ours is just a standard camera.
+
 Another turret design is the Phalanx CIWS turret used aboard US Navy ships. The CIWS uses a fire control radar system to target airborne enemies. This weapon system is used as a last-defense. It detects enemy aircraft by emitting a narrow, intense beam of radio waves to ensure accuracy when targeting and to prevent the system from losing the targets. The system must be directed in the general direction of the target, then the fire control radar searches the area for the target, then locks onto the target and fires. A drawback of this system is that the CIWS must be pointed in the direction of the target, so multiple targets from different areas may be difficult to handle. However, it is extremely accurate when it does target an enemy. It is similar in that it autonomously aims and fires at targets. A strength is that it is more accurate than what we are using to aim and fire at targets.
+
 The Army has developed a system that autonomously targets a 50mm machine gun on what it determines to be hostile targets, but the actual firing is done by humans. It detects targets using cameras, thermal imaging, and lasers. A strength is that it is extremely quick at getting an accurate aim on a target. It is different to the EW309 project since it requires a human to tell the gun to fire, but in EW309 the gun will fire on its own. The Army tried to address the ethical dilemma brought on by this technology by placing the firing decision in the hands of a human.
-    2. Computer Vision
-        a. A camera is necessary for this project because the turret must identify and lock on targets autonomously. The camera’s images need to be processed through MATLAB so that the system can gain useful information from the images it receives. MATLAB receives the image as an input. The first step we took to process the image was to use the Color Thresholder in MATLAB in the HSV color space. The thresholds were set to filter out most colors except the orange of the target it is supposed to lock onto. Next we used eccentricity so that the system could identify circles, which is the shape of the target the turret must aim at. Lastly we created a crosshair and wrote code for the crosshairs to center themselves on the center of the circular target. The eccentricity value is something that we tweaked a lot during testing, but for the final test, the thresholds and eccentricity settings are something that can easily be adjusted for it to fire optimally. 
-        b. 2/C Sweeney focused on Eccentricity and getting the crosshairs to center on the target while 2/C Zaharakis focused on Thresholding and getting the image to MATLAB.
-        c. Enclosure of Code{
-% open connection to web cam
-[cam,prv] = initWebcam;
-drawnow;
-minArea = 1000;
-maxArea = 150000;
-minEcc = 0;
-maxEcc = 0.3;
-% get an image
-im = get(prv,'CData');
-%im_Red = im(:,:,1);
-%im_Green = im(:,:,2);
-%im_Blue = im(:,:,3);
-
-fig1=figure;
-set(fig1,'Name','EW309-Camera Overlay Test');
-ax1=axes(fig1);
-h = imshow(im,'Parent',ax1);
-set(ax1,'NextPlot','add');
-a=[280 360]
-b=[210 270]
-h_crosshair_horiz = plot(ax1,a,[240 240],'Color','red', 'LineWidth', 3);
-h_crosshair_vert = plot(ax1,[320 320],b,'Color','red', 'LineWidth', 3);
-h_cent = plot([240],[300],'m+');
-%hold on; taken care of in line 15
-
-while (1)
-   % first step: get a new image
-   im = get(prv,'CData');
-   
-   % picks out the orange bit, returns bw = binary image; masked is the
-   % image showing only the orange bit
-   [bw,masked] = createMask(im);
-   binFill = imfill(bw, 'holes');
-   binMinArea = bwareaopen(binFill, minArea);
-   
-   [lbl, n] = bwlabel(bw);
-   stats = regionprops(lbl,'Area','centroid','Eccentricity');
-  
-   idx = find(...
-       [stats.Area] <= maxArea & ...
-       [stats.Area] >= minArea & ...
-       [stats.Eccentricity] >= minEcc & ...
-       [stats.Eccentricity] <= maxEcc);
-   statsTargets = stats(idx);
-   for i = 1:numel(idx)
-       binTargets{i} = lbl == idx(i);
-   end
-   if (length(statsTargets) > 0)
-   centx = statsTargets(1).Centroid(1);
-   centy = statsTargets(1).Centroid(2);
-   %plot(centx,centy);
-   h_cent.XData = [centx];
-   h_cent.YData = [centy];
-   else disp("No Targets")
-   end
-   % show the image
-   %h.CData=im; % shows original image
-   %h.CData = masked; % show the masked image
-   h.CData = masked;
-   
-   % TEMPORARY
-   %figure(3);
-   %imshow(binMinArea); 
-   
-   % force redraw
-   drawnow;
-
-   
-   
-   %[lbl, n] = bwlabel(bw);
-   
-  %Centroid
-  %stats = regionprops(lbl,'area','centroid','eccentricity');
-  %cent = stats(2).Centroid;
-   %hold on;
-  
- End
 
 
 
-    3. Functional Block Diagrams
 
 
+\section{System design}
 
+\subsection{Computer vision}
+A camera is necessary for this project because the turret must identify and lock on targets autonomously. The camera’s images need to be processed through MATLAB so that the system can gain useful information from the images it receives. MATLAB receives the image as an input. The first step we took to process the image was to use the Color Thresholder in MATLAB in the HSV color space. The thresholds were set to filter out most colors except the orange of the target it is supposed to lock onto. Next we used eccentricity so that the system could identify circles, which is the shape of the target the turret must aim at. Lastly we created a crosshair and wrote code for the crosshairs to center themselves on the center of the circular target. The eccentricity value is something that we tweaked a lot during testing, but for the final test, the thresholds and eccentricity settings are something that can easily be adjusted for it to fire optimally. 
+
+% Ok to do these as a comment
+% 2/C Sweeney focused on Eccentricity and getting the crosshairs to center on the target while 2/C Zaharakis focused on Thresholding and getting the image to MATLAB.
+
+% Do not need to pad your report to make it longer; if you really want to include this code please add it in an appendix. 
+%        c. Enclosure of Code{
+%% open connection to web cam
+%[cam,prv] = initWebcam;
+%drawnow;
+%minArea = 1000;
+%maxArea = 150000;
+%minEcc = 0;
+%maxEcc = 0.3;
+%% get an image
+%im = get(prv,'CData');
+%%im_Red = im(:,:,1);
+%%im_Green = im(:,:,2);
+%%im_Blue = im(:,:,3);
+%
+%fig1=figure;
+%set(fig1,'Name','EW309-Camera Overlay Test');
+%ax1=axes(fig1);
+%h = imshow(im,'Parent',ax1);
+%set(ax1,'NextPlot','add');
+%a=[280 360]
+%b=[210 270]
+%h_crosshair_horiz = plot(ax1,a,[240 240],'Color','red', 'LineWidth', 3);
+%h_crosshair_vert = plot(ax1,[320 320],b,'Color','red', 'LineWidth', 3);
+%h_cent = plot([240],[300],'m+');
+%%hold on; taken care of in line 15
+%
+%while (1)
+%   % first step: get a new image
+%   im = get(prv,'CData');
+%   
+%   % picks out the orange bit, returns bw = binary image; masked is the
+%   % image showing only the orange bit
+%   [bw,masked] = createMask(im);
+%   binFill = imfill(bw, 'holes');
+%   binMinArea = bwareaopen(binFill, minArea);
+%   
+%   [lbl, n] = bwlabel(bw);
+%   stats = regionprops(lbl,'Area','centroid','Eccentricity');
+%  
+%   idx = find(...
+%       [stats.Area] <= maxArea & ...
+%       [stats.Area] >= minArea & ...
+%       [stats.Eccentricity] >= minEcc & ...
+%       [stats.Eccentricity] <= maxEcc);
+%   statsTargets = stats(idx);
+%   for i = 1:numel(idx)
+%       binTargets{i} = lbl == idx(i);
+%   end
+%   if (length(statsTargets) > 0)
+%   centx = statsTargets(1).Centroid(1);
+%   centy = statsTargets(1).Centroid(2);
+%   %plot(centx,centy);
+%   h_cent.XData = [centx];
+%   h_cent.YData = [centy];
+%   else disp("No Targets")
+%   end
+%   % show the image
+%   %h.CData=im; % shows original image
+%   %h.CData = masked; % show the masked image
+%   h.CData = masked;
+%   
+%   % TEMPORARY
+%   %figure(3);
+%   %imshow(binMinArea); 
+%   
+%   % force redraw
+%   drawnow;
+%
+%   
+%   
+%   %[lbl, n] = bwlabel(bw);
+%   
+%  %Centroid
+%  %stats = regionprops(lbl,'area','centroid','eccentricity');
+%  %cent = stats(2).Centroid;
+%   %hold on;
+%  
+% End
+%
+
+\subsection{Functional block diagram}
+%    3. Functional Block Diagrams
+% This part seems out of sequence. 
 Our functional block diagram has a user that interfaces with Matlab to deliver code to our mbed which acts upon the subsystems of the diagram. Matlab receives commands from the user and takes into account our computer vision code to know which targets to create for the system. These subsystems are the turret and encoder, which draw power from the power supply. The turret then powers the plunger and spinner using nine volts of power and causes the gun to fire.
 
 
 
 
 
+\subsection{Firing circuit}
+%    4. Firing Circuit Subsection
+The firing circuit is what ensures balls are being fed to the actual firing mechanism, and that the firing mechanism fires when it needs to. Code was written to control when and how much voltage is applied to the “shooter” and the “feeder.” The role of the pull down resistor is to ensure that each component either receives an on or off signal and nothing else in between. The MOSFET is used to control the motors and it implements PWMs sent from the mbed.The snubber circuit and flyback diode prevent voltage spikes, protecting the physical components and maintaining the integrity of sent signals. It was challenging to build this circuit because it was hard to understand how everything would work together, but once we connected the mbed to the circuit connecting the pins to the components started to make it more clear how components would work together. We were helped by looking at previous groups’ models. A mistake we made early on was keeping the wires very long and not labeling what each component controlled. By the end of the project, each component was neatly labeled and the wires were made as short as possible to make it easy to follow where each wire went, which makes troubleshooting much simpler. We learned that it pays to be neat and have a general idea of what each part of the circuit is trying to accomplish before starting the build.
 
-    4. Firing Circuit Subsection
-        a. The firing circuit is what ensures balls are being fed to the actual firing mechanism, and that the firing mechanism fires when it needs to. Code was written to control when and how much voltage is applied to the “shooter” and the “feeder.” The role of the pull down resistor is to ensure that each component either receives an on or off signal and nothing else in between. The MOSFET is used to control the motors and it implements PWMs sent from the mbed.The snubber circuit and flyback diode prevent voltage spikes, protecting the physical components and maintaining the integrity of sent signals. It was challenging to build this circuit because it was hard to understand how everything would work together, but once we connected the mbed to the circuit connecting the pins to the components started to make it more clear how components would work together. We were helped by looking at previous groups’ models. A mistake we made early on was keeping the wires very long and not labeling what each component controlled. By the end of the project, each component was neatly labeled and the wires were made as short as possible to make it easy to follow where each wire went, which makes troubleshooting much simpler. We learned that it pays to be neat and have a general idea of what each part of the circuit is trying to accomplish before starting the build.
-        b. Both 2/C Zaharkis and 2/C Sweeney worked together to figure out how to best make the connection and prepare the wires and connections. The work was split 50/50 since all work was done together.
-        c. Picture of our firing circuit:
-		
-    5. Turret Subsystem
+%        b. Both 2/C Zaharkis and 2/C Sweeney worked together to figure out how to best make the connection and prepare the wires and connections. The work was split 50/50 since all work was done together.
+%        c. Picture of our firing circuit:
+\begin{figure}
+\caption{Picture of our firing circuit}
+\end{figure}
 
+
+
+
+
+
+\subsection{Turret subsystem}		
+%    5. Turret Subsystem
 In order to compute the torque and power requirements for our turret, we took various measurements of torque and power with loads. We compared our results to the requirements of various motors to be able to make a decision. To decide on a motor we had to understand the operating power, torque, and various rpm measurements for each different motor. We scored alternatives based on how well they performed in terms of speed and how efficient they were.
 
 We spun the motor with various load sizes and powers and were able to get motor speed, torque and other necessary statistics.
@@ -117,34 +151,27 @@ Digital speed control is better than analog because it is more efficient and wil
 
 Turret angle was measured using a sensor that measures revolutions per minute. 
 
-I don’t know the answers to a lot of these questions or cannot answer them because we are not in the classroom. 
+%I don’t know the answers to a lot of these questions or cannot answer them because we are not in the classroom. 
 
-Professor, Is it possible to condense this assignment because we are no longer in the classroom?
+%Professor, Is it possible to condense this assignment because we are no longer in the classroom?
 
+
+
+
+
+
+\subsection{Ballistics testing and characterization of weapon accuracy}
+%Explain why you did this
 
 Accuracy
-    • Preliminaries
-        ◦ Working Turret
-        ◦ Working Nerf Gun
-        ◦ Nerf Bullets
-        ◦ A target and a way to mark where the bullets hit
-        ◦ Working code to make the gun fire at a target
-    • Test
-        ◦ 1. Ensure connections are correct on the bread-board and power is set to 9V, along with all the other preliminary set-up steps.
-        ◦ 2. To test accuracy we will take three groups of five shots, each against an orange circle. We will aim for the midpoint of the circle, as marked by a red dot.
-        ◦ 3. The three groups of shots will be done from 5, 10, and 15 meters.
-        ◦ 4. For each testing group, we begin by firing one shot at nothing to locate an area to put our target.
-        ◦ 5. We will then hold the target in place and take a total of five shots. The first three shots will be fired separately, spaced by two seconds. The final two shots will be shot consecutively. We will follow this procedure for all three distances. 
-        ◦ 6. We will mark off where each shot hits on the orange circle, then proceed to evaluating our ballistics test of the weapon.
- 
-    • Evaluation
-        ◦ A bullseye and target layout are integral to evaluating the gun’s effectiveness
-            ▪ On the target for accuracy, a bullseye should be drawn and then using a compass, circules should be drawn centerd on the bullseye spaced out .5 inches.
-            ▪ On the target for precision, the impact of the first bullet should be marked in red, the other impacts should be marked in black. The red dot will act as the bullseye and circles spaced half an inch apart should be drawn centered on the red dot.
-        ◦ The balls will be fired at a rate of 1 per 5 seconds. After each ball hits, one partner will mark where it hit on the target. 
-            ▪ For Precision - Using the first hit as a bullseye, find the average distance that each impact is from the bullseye
-            ▪ For Accuracy - average the distance from the bullseye that the 5 shots hit at
-        ◦ The lower the average for both tests, the more precise and/or accurate the system is.
+	Preliminaries
+	Working Turret
+	Working Nerf Gun
+	Nerf Bullets
+	A target and a way to mark where the bullets hit
+Working code to make the gun fire at a target
+Test
+The detailed test procedure is included in appendix~\ref{app:A}
 
 how does that look? i don’t know if that is what we are looking for or not
 To me it seems like the test is only testing precision and not accuracy
@@ -152,3 +179,38 @@ To me it seems like the test is only testing precision and not accuracy
 	I think the accuracy part of the test would be use the code we ahve to aim at the center of the circle (assuem that works). Then draw circles on the target to determine how close to center the bullets hit. I would just add something like this in, I like the percision part test you made.
 
 
+
+
+
+\section{System integration and performance characterization}
+\section{Results}
+\section{Discussion}
+
+
+
+% references here
+%\bibliography{sweeney-zaharakis.bib}
+
+
+
+\appendix
+\section{Ballistics test procedure}
+\label{app:A}
+1. Ensure connections are correct on the bread-board and power is set to 9V, along with all the other preliminary set-up steps.
+2. To test accuracy we will take three groups of five shots, each against an orange circle. We will aim for the midpoint of the circle, as marked by a red dot.
+3. The three groups of shots will be done from 5, 10, and 15 meters.
+4. For each testing group, we begin by firing one shot at nothing to locate an area to put our target.
+5. We will then hold the target in place and take a total of five shots. The first three shots will be fired separately, spaced by two seconds. The final two shots will be shot consecutively. We will follow this procedure for all three distances. 
+6. We will mark off where each shot hits on the orange circle, then proceed to evaluating our ballistics test of the weapon.
+ 
+Evaluation
+A bullseye and target layout are integral to evaluating the gun’s effectiveness
+On the target for accuracy, a bullseye should be drawn and then using a compass, circules should be drawn centerd on the bullseye spaced out .5 inches.
+On the target for precision, the impact of the first bullet should be marked in red, the other impacts should be marked in black. The red dot will act as the bullseye and circles spaced half an inch apart should be drawn centered on the red dot.
+The balls will be fired at a rate of 1 per 5 seconds. After each ball hits, one partner will mark where it hit on the target. 
+For Precision - Using the first hit as a bullseye, find the average distance that each impact is from the bullseye
+For Accuracy - average the distance from the bullseye that the 5 shots hit at
+The lower the average for both tests, the more precise and/or accurate the system is.
+
+
+\end{document}
