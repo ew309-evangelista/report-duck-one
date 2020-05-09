@@ -11,13 +11,12 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Add an abstract / executive summary here
+We were tasked with developing an autonomous turret that would lock on to a target autonomously and shoot balls on command. The user would determine when the firing took place, but the turret would autonomously align itself so that if fired it would hit the circular orange target. This project was initially done in person, and  completed through a simulation due to the corona virus. We created code for the system in MATLAB and C.
 \end{abstract}
 
 \section{Introduction}
 %    1. Problem Statement and Background Research
 %	Problem Statement
-Test citation here \cite{buck2020go}.
 
 \subsection{Problem statement}
 The problem is to design an autonomous turret. The turret should identify shapes and colors. It also needs to differentiate between what is a target and what is not. Furthermore, the turret should be able to fire once it is properly aligned with the target. It should do so relatively quickly and accurately. This means the turret should not fire at a target that is of similar color, but different shape than the desired target. Lastly, the table should move to aim the gun based on information provided to it by the camera. The turret will need to be controlled with programming that will take into account information from the camera and will then control the turret table and the gun in unison. 
@@ -167,30 +166,20 @@ Turret angle was measured using a sensor that measures revolutions per minute.
 
 \subsection{Ballistics testing and characterization of weapon accuracy}
 %Explain why you did this
+We needed to do ballistics testing for a variety of reasons. The foremost reason is that in the fleet, when handling weapons of this nature, it is imperative to test them to ensure maximum effectiveness and safety. We created an effective way to do a ballistics test with detailed steps.
+The detailed test procedure is included in the References.
 
-Accuracy
-	Preliminaries
-	Working Turret
-	Working Nerf Gun
-	Nerf Bullets
-	A target and a way to mark where the bullets hit
-Working code to make the gun fire at a target
-Test
-The detailed test procedure is included in appendix~\ref{app:A}
-
-how does that look? i don’t know if that is what we are looking for or not
-To me it seems like the test is only testing precision and not accuracy
-
-	I think the accuracy part of the test would be use the code we ahve to aim at the center of the circle (assuem that works). Then draw circles on the target to determine how close to center the bullets hit. I would just add something like this in, I like the percision part test you made.
-
-
-
-
+In order to do a proper ballistics test, we needed to find the Circular Error Probable, or a constructed circle where 50 percent of our shots landed. To find the CEP, we created an excel spreadsheet and used the data given in the 173cm range tables. We first calculated Sx and Sy, which are the square roots of the average of tht x and y data respectively. Next we calculated Sp, which is the average of Sx and  Sy. Finally, we found the CEP by multiplying Sp by 1.1774.
 
 \section{System integration and performance characterization}
-\section{Results}
-\section{Discussion}
+We learned to assemble a circuit that can be integrated with computer code. We also learned more about computer vision and thresholding. We felt much more comfortable when working with the system right in front of us, we learned it is much more challenging to work on a physical system remotely. The coolest thing we learned to do was create a feedback loop where the user pressed a button on the keyboard to fire a shot or move the turret and the turret measured and monitored its own position.
+\section{Results} We found that using gains of Kp = 0.85, Ki= 0.47, and Kd = 0.35 with a theta of 10 degrees was effective in landing all of our shots within the orange circle/on target. We used a time of 10 seconds, to allow the system integration to take place, and effectively put our shots down range. The range was 173cm, as we saw in the excel spreadsheet and where we were able to calculate a CEP and x and y bias values, as seen in our code. The gain values were found using our transfer function, that was based similarly to ones we saw in EW305 and EW306. 
+We felt as if our turret demonstration was effective because we were able to successfully put all 10 shots on target over multiple trials. 
+\section{Discussion} Something that went wrong was thresholding, and that had to be done again since the image lighting is different that what the cameras picked up on the scene. That was not necessarily surprising, however. We did not run into many problems with existing systems because most became obsolete due to the shift to a simulation.
+A risk that was eliminated by working through a simulation was damaging any of the physical equipment and losing any components to the system. A new risk is that data could possibly get lost if an online service were to crash or cease to exist. I do not think it would take much effort to jump to physical hardware. Gains would have to be tweaked to adjust for some minute changes in performance. We would definitely need to threshold again though.
+I think that if I was working on the system in  person, I would be more inclined to find a way to upload and save our code to the cloud daily. It helps with sharing the code with your partner, something we did through email, but also makes your team increasingly able to handle disruptions such as the corona virus.
 \section{Acknowledgements}
+We would like to thank Prof. Evangelista for his help all semester. We were helped in finding the transfer function and respective gain values by 2/C Maly, so we would like to thank him as well. Also, we need to thank MathWorks, the company responsible for MATLAB, for creating a system that has allowed us to work so effectively in a distance-learning environment. 
 
 % References
 \bibliography{sweeney-zaharakis.bib}
@@ -198,7 +187,7 @@ To me it seems like the test is only testing precision and not accuracy
 
 
 \appendix
-\section{Ballistics test procedure}
+
 \label{app:A}
 1. Ensure connections are correct on the bread-board and power is set to 9V, along with all the other preliminary set-up steps.
 2. To test accuracy we will take three groups of five shots, each against an orange circle. We will aim for the midpoint of the circle, as marked by a red dot.
@@ -208,12 +197,12 @@ To me it seems like the test is only testing precision and not accuracy
 6. We will mark off where each shot hits on the orange circle, then proceed to evaluating our ballistics test of the weapon.
  
 Evaluation
-A bullseye and target layout are integral to evaluating the gun’s effectiveness
-On the target for accuracy, a bullseye should be drawn and then using a compass, circules should be drawn centerd on the bullseye spaced out .5 inches.
-On the target for precision, the impact of the first bullet should be marked in red, the other impacts should be marked in black. The red dot will act as the bullseye and circles spaced half an inch apart should be drawn centered on the red dot.
+A bulls-eye and target layout are integral to evaluating the gun’s effectiveness
+On the target for accuracy, a bulls-eye should be drawn and then using a compass, circles should be drawn centered on the bulls-eye spaced out .5 inches.
+On the target for precision, the impact of the first bullet should be marked in red, the other impacts should be marked in black. The red dot will act as the bulls-eye and circles spaced half an inch apart should be drawn centered on the red dot.
 The balls will be fired at a rate of 1 per 5 seconds. After each ball hits, one partner will mark where it hit on the target. 
-For Precision - Using the first hit as a bullseye, find the average distance that each impact is from the bullseye
-For Accuracy - average the distance from the bullseye that the 5 shots hit at
+For Precision - Using the first hit as a bulls-eye, find the average distance that each impact is from the bulls-eye
+For Accuracy - average the distance from the bulls-eye that the 5 shots hit at
 The lower the average for both tests, the more precise and/or accurate the system is.
 
 
